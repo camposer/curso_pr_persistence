@@ -1,7 +1,9 @@
 package es.indra.formacion.pr.persistence.model;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +40,15 @@ public class Persona implements Serializable {
 	private List<Ordenador> ordenadores;
 
 	public Persona() {
+	}
+
+	public Persona(String nombre, String apellido, Date fechaNacimiento,
+			Double altura) {
+		super();
+		this.altura = altura;
+		this.apellido = apellido;
+		this.fechaNacimiento = fechaNacimiento;
+		this.nombre = nombre;
 	}
 
 	public Integer getId() {
