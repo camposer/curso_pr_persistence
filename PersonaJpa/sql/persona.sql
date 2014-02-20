@@ -19,6 +19,7 @@ VALUES ('Pedro','Garcia','1971-05-18',170);
 
 SELECT * FROM persona;
 
+DROP TABLE ordenador;
 CREATE TABLE ordenador
 (
 	id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
@@ -41,3 +42,5 @@ JOIN ordenador o ON o.persona_id = p.id
 
 SELECT * FROM persona p, ordenador o
 WHERE o.persona_id = p.id
+
+
