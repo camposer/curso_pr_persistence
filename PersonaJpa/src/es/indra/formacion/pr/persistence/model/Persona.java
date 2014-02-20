@@ -88,18 +88,26 @@ public class Persona implements Serializable {
 		this.ordenadores = ordenadores;
 	}
 
-	public Ordenador addOrdenadore(Ordenador ordenadore) {
-		getOrdenadores().add(ordenadore);
-		ordenadore.setPersona(this);
+	public Ordenador addOrdenadores(Ordenador ordenadores) {
+		getOrdenadores().add(ordenadores);
+		ordenadores.setPersona(this);
 
-		return ordenadore;
+		return ordenadores;
 	}
 
-	public Ordenador removeOrdenadore(Ordenador ordenadore) {
-		getOrdenadores().remove(ordenadore);
-		ordenadore.setPersona(null);
+	public Ordenador removeOrdenadores(Ordenador ordenadores) {
+		getOrdenadores().remove(ordenadores);
+		ordenadores.setPersona(null);
 
-		return ordenadore;
+		return ordenadores;
 	}
 
+	@Override
+	public String toString() {
+		return "Persona [id=" + id + ", altura=" + altura + ", apellido="
+				+ apellido + ", fechaNacimiento=" + fechaNacimiento
+				+ ", nombre=" + nombre + ", ordenadores=" + ordenadores + "]";
+	}
+
+	
 }

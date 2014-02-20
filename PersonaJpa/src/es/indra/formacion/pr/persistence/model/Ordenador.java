@@ -65,4 +65,11 @@ public class Ordenador implements Serializable {
 		this.persona = persona;
 	}
 
+	@Override
+	public String toString() {
+		return "Ordenador [id=" + id + ", nombre=" + nombre + ", serial="
+				+ serial + "]";
+	}
+
+	
 }
