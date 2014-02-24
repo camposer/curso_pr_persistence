@@ -2,7 +2,9 @@ package es.indra.formacion.pr.persistence.servlet.persona;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.indra.formacion.pr.persistence.model.Ordenador;
 import es.indra.formacion.pr.persistence.model.Persona;
 import es.indra.formacion.pr.persistence.service.IPersonaService;
 import es.indra.formacion.pr.persistence.service.PersonaServiceFactory;
@@ -39,6 +42,8 @@ public class AgregarPersonaServlet extends HttpServlet {
 		String apellido = request.getParameter("apellido");
 		String sfechaNacimiento = request.getParameter("fechaNacimiento");
 		String saltura = request.getParameter("altura");
+		String ordenadorNombre = request.getParameter("ordenadorNombre");
+		String ordenadorSerial = request.getParameter("ordenadorSerial");
 		
 		// TODO: Incluir validaciones!
 		
@@ -53,6 +58,15 @@ public class AgregarPersonaServlet extends HttpServlet {
 						altura
 					);
 			
+			// Construir lista de ordenadores!
+			List<Ordenador> ordenadores = new ArrayList<Ordenador>();
+			Ordenador o = new Ordenador();
+			o.setNombre(ordenadorNombre);
+			o.setSerial(ordenadorSerial);
+			ordenadores.add(o);
+			
+			p.setOrdenadores(ordenadores);
+
 			personaService.agregarPersona(p);
 		} catch (Exception e) {
 			e.printStackTrace();

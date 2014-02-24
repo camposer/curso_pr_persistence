@@ -2,8 +2,9 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="es.indra.formacion.pr.persistence.model.Persona" %>
+<%@ page import="es.indra.formacion.pr.persistence.model.Ordenador" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -31,6 +32,21 @@
 				<td><input type="text" name="altura"/></td>
 			</tr>
 			<tr>
+				<td>
+					Ordenadores:<br/>
+					<table>
+						<tr>
+							<td>Nombre:</td>
+							<td><input type="text" name="ordenadorNombre"/></td>
+						</tr>
+						<tr>
+							<td>Serial:</td>
+							<td><input type="text" name="ordenadorSerial"/></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
 				<td colspan="2"><input type="submit" value="Agregar"/></td>
 			</tr>
 		</table>
@@ -38,12 +54,13 @@
 	
 	<br/>
 	
-	<table>
+	<table border="1">
 		<tr>
 			<th>Nombre</th>
 			<th>Apellido</th>
 			<th>Fecha de Nacimiento</th>
 			<th>Altura</th>
+			<th>Ordenadores</th>
 		</tr>
 	<%
 	List<Persona> personas = (List<Persona>)request.getAttribute("personas");
@@ -54,6 +71,17 @@
 			<td><%= p.getApellido() %></td>
 			<td><%= p.getFechaNacimiento() %></td>
 			<td><%= p.getAltura() %></td>
+			<td>
+				<ul>
+					<% 
+					if (p.getOrdenadores() != null) for (Ordenador o : p.getOrdenadores()) {
+					%>
+						<li><%= o.getNombre() + " " + o.getSerial() %></li>
+					<%
+					}
+					%>
+				</ul>
+			</td>
 		</tr>
 	<%
 	}
