@@ -7,17 +7,19 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 public abstract class BaseDao<T, K> implements IDao<T, K> {
 	private EntityManager em;
 	private Class<T> clase;
+	private boolean autoCommit;
 	
 	@SuppressWarnings("unchecked")
-	public BaseDao() {
-		em = Persistence
-				.createEntityManagerFactory("PersonaJpa")
-				.createEntityManager();
+	public BaseDao(boolean autoCommit) {
+		if (autoCommit) {
+			em = createEntityManager(); 
+		}
 		
 		Type type = this.getClass().getGenericSuperclass();
 
@@ -26,8 +28,20 @@ public abstract class BaseDao<T, K> implements IDao<T, K> {
 	        Type[] fieldArgTypes = pt.getActualTypeArguments();
 	        clase = (Class<T>) fieldArgTypes[0];
 	    }
+	    
+	    this.autoCommit = autoCommit;
 	}
-
+	
+	public BaseDao() {
+		this(true);
+	}
+	
+	public static EntityManager createEntityManager() {
+		return Persistence
+				.createEntityManagerFactory("PersonaJpa")
+				.createEntityManager();
+	}
+	
 	@Override
 	protected void finalize() throws Throwable {
 		if (em != null)
@@ -36,17 +50,22 @@ public abstract class BaseDao<T, K> implements IDao<T, K> {
 	
 	@Override
 	public void agregar(T obj) {
-		EntityTransaction et = em.getTransaction();
-		
+		EntityTransaction et = null;
 		try {
-			et.begin();
+			if (autoCommit) {
+				et = em.getTransaction();
+				et.begin();
+			}
 
 			em.persist(obj);
-			
-			et.commit();
-		} catch (Exception e) {
-			if (et != null)
+
+			if (autoCommit)
+				et.commit();
+		} catch (PersistenceException e) {
+			if (et != null && autoCommit)
 				et.rollback();
+			else if (!autoCommit)
+				throw e;
 		} 
 	}
 
@@ -59,41 +78,56 @@ public abstract class BaseDao<T, K> implements IDao<T, K> {
 
 	@Override
 	public void modificar(T obj) {
-		EntityTransaction et = em.getTransaction();
-		
+		EntityTransaction et = null;
 		try {
-			et.begin();
+			if (autoCommit) {
+				et = em.getTransaction();
+				et.begin();
+			}
 
 			em.merge(obj);
-			
-			et.commit();
-		} catch (Exception e) {
-			if (et != null)
+
+			if (autoCommit)
+				et.commit();
+		} catch (PersistenceException e) {
+			if (et != null && autoCommit)
 				et.rollback();
+			else if (!autoCommit)
+				throw e;
 		} 
 	}
 
 	@Override
 	public void eliminar(K clave) {
-		EntityTransaction et = em.getTransaction();
-		
+		EntityTransaction et = null;
 		try {
-			et.begin();
-			
-			T obj = em.find(clase, clave);
-			em.remove(obj);
-			
-			et.commit();
-		} catch (Exception e) {
-			if (et != null)
-				et.rollback();
-		} 
+			if (autoCommit) {
+				et = em.getTransaction();
+				et.begin();
+			}
 
+			Query q = em.createQuery("delete from " + clase.getSimpleName() + " where id = :id");
+			q.setParameter("id", clave);
+			q.executeUpdate();
+			
+			if (autoCommit)
+				et.commit();
+		} catch (PersistenceException e) {
+			if (et != null && autoCommit)
+				et.rollback();
+			else if (!autoCommit)
+				throw e;
+		} 
 	}
 
 	@Override
 	public T obtener(K clave) {
 		return em.find(clase, clave);
+	}
+	
+	@Override
+	public void setEntityManager(EntityManager em) {
+		this.em = em;
 	}
 
 }
